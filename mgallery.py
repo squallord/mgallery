@@ -21,14 +21,17 @@ def _rld():
 # Just clears the log folder to avoid mixing the past and
 # current results.
 #
-def _clearLog(logFolder):
-	for file in os.listdir(logFolder):
-		filePath = logFolder + "/" + str(file)
-		try:
-			if os.path.isfile(filePath):
-				os.unlink(filePath)
-		except Exception as e:
-			print e
+def _clearLog():
+	if os.path.exists(str(os.getcwd()) + "/log"):
+		for file in os.listdir("log"):
+			filePath = "log/" + str(file)
+			try:
+				if os.path.isfile(filePath):
+					os.unlink(filePath)
+			except Exception as e:
+				print e
+	else:
+		os.mkdir("log")
 
 def _stopCondition(attempt, maxAttempts):
 	if attempt >= maxAttempts:
@@ -95,7 +98,7 @@ def mosaic(folderName = "img_folder", \
 		   color = ct.BCKGRND_CLR):
 	
 	_rld()
-	_clearLog("log")
+	_clearLog()
 	pictures = []
 	attempt = 0
 	minChunkSize = 2**clusterPow
