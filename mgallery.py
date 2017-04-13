@@ -54,12 +54,13 @@ def _generateBlankPixelCanvas(paperSize):
 	return blankCanvas
 
 # Get each image from a canvas and paste it on a new image with paperSize dimensions.
-#
-def _pasteImagesInCanvas(paperSize, canvas):
+# Uncomment picture.addID() to add the ID as a text overlay to each picture.
+# 
+def _pasteImagesInCanvas(paperSize, canvas, padding, color):
 	pixelCanvas = _generateBlankPixelCanvas(paperSize)
 	for picture in canvas.getEmbedded():
-		picture.addPadding(4)
-		picture.addID()
+		picture.addPadding(padding, color)
+		# picture.addID()
 		pixelCanvas.paste(picture.getImage(), picture.getPosition())
 	return pixelCanvas
 
@@ -119,13 +120,18 @@ def mosaic(folderName = "img_folder", \
 			if utils.isImage(f):
 				count = count + 1
 				p = path + "/" + f
-				pictures.append(pct.Picture(p, Image.open(p), count))
+				pictures.append(pct.Picture(f, p, Image.open(p), count))
 
 	print str(len(pictures)) + " pictures to form a mosaic gallery"
 
+	resizedPictures = []
 	for i in range(len(pictures)):
-		p1 = [x for x in pictures if x.getID() == 27]
-		pictures[i].resizeToClosestChunk(pixelChunks, smallestPixelChunk)
+		if pictures[i].resizeToClosestChunk(pixelChunks, smallestPixelChunk):
+			resizedPictures.append(pictures[i])
+		else:
+			print "ID: " + str(pictures[i].getID()) + " with name " + pictures[i].getName() +\
+				  " could not be resized"
+	pictures = resizedPictures
 
 	while not _stopCondition(attempt, maxAttempts):
 		attempt = attempt + 1
@@ -142,7 +148,7 @@ def mosaic(folderName = "img_folder", \
 		highest.printClusterCanvas("", "_highest")
 		print str(highest.getCanvasRating()) + " is the highest rating of this simulation"
 
-		pixelCanvas = _pasteImagesInCanvas(paperSize, highest)
+		pixelCanvas = _pasteImagesInCanvas(paperSize, highest, padding, color)
 		_savePixelCanvas(pixelCanvas)
 	else:
 		print "simulation endend without finding a solution for the problem ..."

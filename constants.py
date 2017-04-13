@@ -1,6 +1,6 @@
 import math
 
-DEF_PADDING = 2;
+DEF_PADDING = 4;
 BCKGRND_CLR = (255, 255, 255)
 DEF_AR = math.sqrt(2)
 SZ_A3 = (3512, 4960)

@@ -2,8 +2,11 @@ import utils, math
 import constants as ct
 from PIL import ExifTags
 
+# class to keep picture data
+#
 class Picture:
-	def __init__(self, path, image, number):
+	def __init__(self, name, path, image, number):
+		self._name = name
 		self._path = path
 		self._image = utils.changeAR(image)
 		self._ar = float(image.size[0])/image.size[1]
@@ -11,6 +14,9 @@ class Picture:
 		self._position = (0, 0)
 		self._id = number
 		
+	def getName(self):
+		return self._name
+
 	def getImage(self):
 		return self._image
 
@@ -31,8 +37,8 @@ class Picture:
 
 	# Adds internal padding to the image.
 	#
-	def addPadding(self, padding = ct.DEF_PADDING):
-		self._image = utils.addPaddingIn(self._image, padding)
+	def addPadding(self, padding, color):
+		self._image = utils.addPaddingIn(self._image, padding, color)
 
 	# Print photo ID in the upper-left corner of the image.
 	# Just for debugging reasons...
@@ -115,6 +121,8 @@ class Picture:
 		return math.sqrt((p[0] - self._image.size[0]) ** 2 + (p[1] - self._image.size[1]) ** 2)
 
 	def _findClosestResolution(self, distances):
+		if len(distances) == 0:
+			return None
 		closest = distances[0]
 		for d in distances:
 			if d[0] < closest[0]:
@@ -133,13 +141,14 @@ class Picture:
 				if self._isGreater(c):
 					distances.append((self._findDistance(c), c[0], c[1]))
 		
-		try:
-			closestResolution = self._findClosestResolution(distances)
-		except ValueError:
-			print "There's no closest chunck to image at " + self._path
-		
-		chunkClusterWidth = closestResolution[0]/smallestChunk[1]
-		chunkClusterHeight = closestResolution[1]/smallestChunk[0]
-		self._chunkType = (chunkClusterHeight, chunkClusterWidth)
-		self._image = self._image.resize(closestResolution)
-		self._ar = float(closestResolution[0])/closestResolution[1]
+		closestResolution = self._findClosestResolution(distances)
+
+		if closestResolution != None:
+			chunkClusterWidth = closestResolution[0]/smallestChunk[1]
+			chunkClusterHeight = closestResolution[1]/smallestChunk[0]
+			self._chunkType = (chunkClusterHeight, chunkClusterWidth)
+			self._image = self._image.resize(closestResolution)
+			self._ar = float(closestResolution[0])/closestResolution[1]
+			return True
+		else:
+			return False
