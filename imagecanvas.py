@@ -2,6 +2,17 @@ from copy import copy, deepcopy
 import random
 import constants as ct
 
+# Function just to print a plain blank canvas
+#
+def printBlankClusterCanvas(folderName = ".", size = 64**2, numOfClusters = 64):
+	file = open("log_blank.txt", "w")
+	for i in range(size):
+		if i % numOfClusters == 0 and i != 0:
+			file.write("\n")
+		num = 0
+		file.write(" " + str(num) + " ")
+	file.close()
+
 # Image Canvas is a class made to simplify the problem, to fit the images (represented 
 # by ID numbers) in a txt canvas of numOfClusters x numOfClusters. This simplification 
 # allow us to check for image intesection in a much easier way, avoiding dealing with 
