@@ -125,7 +125,7 @@ def cropAndPadIn(image, width, height, padding):
 
 def isImage(file):
 	components = file.split('.')
-	ext = components[len(components) - 1]
+	ext = components[len(components) - 1].lower()
 	if ext == 'png' or ext == 'jpg' or ext == 'jpeg' or ext == 'bmp':
 		return True
 	else:
