@@ -8,8 +8,8 @@ class Picture:
 	def __init__(self, name, path, image, number):
 		self._name = name
 		self._path = path
-		self._image = utils.changeAR(image)
-		self._ar = float(image.size[0])/image.size[1]
+		self._image = utils.changeAR(self._correctImageOrientation(image, number))
+		self._ar = float(self._image.size[0])/self._image.size[1]
 		self._chunkType = (0, 0)
 		self._position = (0, 0)
 		self._id = number
@@ -49,7 +49,7 @@ class Picture:
 	def setPosition(self, position):
 		self._position = position
 
-	# This method was not used, but could be useful in the future.
+	# A quick way to get image EXIF data.
 	#
 	def _fetchExifData(self, image):
 		ret = {}
@@ -66,8 +66,8 @@ class Picture:
 	def _correctImageOrientation(self, image, number):
 		data = self._fetchExifData(image)
 		if data is not None and 'Orientation' in data:
-			if not data['Orientation']:
-				return image.rotate(90, expand = True)
+			if data['Orientation'] != 1:
+				image = image.rotate(-90, expand = True)
 		return image
 
 	def isDowngradable(self):

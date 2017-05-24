@@ -60,7 +60,7 @@ def _pasteImagesInCanvas(paperSize, canvas, padding, color):
 	pixelCanvas = _generateBlankPixelCanvas(paperSize)
 	for picture in canvas.getEmbedded():
 		picture.addPadding(padding, color)
-		picture.addID()
+		# picture.addID()
 		pixelCanvas.paste(picture.getImage(), picture.getPosition())
 	return pixelCanvas
 
