@@ -67,16 +67,16 @@ def _pasteImagesInCanvas(paperSize, canvas, padding, color):
 def _savePixelCanvas(pixelCanvas, name = "mosaic_gallery.jpg"):
 	pixelCanvas.save(name)
 
-#######################################################################################################
-##                                       >>> Main program <<<                                        ##
-#######################################################################################################
-# folderName: relative path to the folder that contains the images                                    #
-# maxAttempts: maximum number of times the algorithm (highter values should improve the final result) #
-# paperSize: the size in pixels of the paper (use numbers that are divisible by 8)                    #
-# clusterPow: 2^clusterPow will define the minimum chunk size in clusters                             #
-# padding: padding in pixels to be added to each image                                                #
-# color: the padding color                                                                            #
-#######################################################################################################
+############################################################################################################
+##                                       >>> Main program <<<                                             ##
+############################################################################################################
+# folderName: relative path to the folder that contains the images                                         #
+# maxAttempts: maximum number of times the algorithm runs (highter values should improve the final result) #
+# paperSize: the size in pixels of the paper (use numbers that are divisible by 8)                         #
+# clusterPow: 2^clusterPow will define the minimum chunk size in clusters                                  #
+# padding: padding in pixels to be added to each image                                                     #
+# color: the padding color                                                                                 #
+############################################################################################################
 #
 # This method tries to find a closed solution for the mosaic gallery problem. Be aware that a solution
 # may not exist. It'll depend mostly on the number of images and the size of each individual image.
@@ -91,11 +91,11 @@ def _savePixelCanvas(pixelCanvas, name = "mosaic_gallery.jpg"):
 # with every successfully fit image on it. This means that not 100% of the images could be used.
 # It most commomnly fits about 70 to 90% of the pictures (at least in this first version).
 #
-def mosaic(folderName = "img_folder", \
-		   maxAttempts = ct.MAX_ATTEMPTS, \
-		   paperSize = ct.SZ_A3, \
-		   clusterPow = ct.SZ_CLSTR, \
-		   padding = ct.DEF_PADDING, \
+def mosaic(folderName = "img_folder",
+		   maxAttempts = ct.MAX_ATTEMPTS,
+		   paperSize = ct.SZ_A3,
+		   clusterPow = ct.SZ_CLSTR,
+		   padding = ct.DEF_PADDING,
 		   color = ct.BCKGRND_CLR):
 	
 	_rld()
@@ -106,9 +106,9 @@ def mosaic(folderName = "img_folder", \
 	width = int(round(paperSize[0] / minChunkSize))
 	height = int(round(paperSize[1] / minChunkSize))
 	smallestPixelChunk = (height, width)
-	pixelChunks = [(2 * height, 4 * width), \
-			  	   (2 * height, 2 * width), \
-			  	   (height, 2 * width), \
+	pixelChunks = [(2 * height, 4 * width),
+				   (2 * height, 2 * width),
+			  	   (height, 2 * width),
 			  	   (height, width)]
 	canvasList = []
 	
