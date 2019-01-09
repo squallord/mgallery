@@ -5,7 +5,7 @@
 ###############################
 
 from PIL import Image
-import os, utils, gc
+import os, utils
 import constants as ct
 import imagecanvas as ic
 import picture as pct
@@ -56,16 +56,34 @@ def _generateBlankPixelCanvas(paperSize):
 # Get each image from a canvas and paste it on a new image with paperSize dimensions.
 # Uncomment picture.addID() to add the ID as a text overlay to each picture.
 # 
-def _pasteImagesInCanvas(paperSize, canvas, padding, color):
+def _pasteImagesInCanvas(paperSize, canvas, padding, color, debug):
 	pixelCanvas = _generateBlankPixelCanvas(paperSize)
 	for picture in canvas.getEmbedded():
 		picture.addPadding(padding, color)
-		# picture.addID()
+		if debug:
+			picture.writeTXT('ID: ' + str(picture.getID()), 25, (0, 0))
+			picture.writeTXT(picture.getName(), 25, (0, 30))
 		pixelCanvas.paste(picture.getImage(), picture.getPosition())
 	return pixelCanvas
 
 def _savePixelCanvas(pixelCanvas, name = "mosaic_gallery.jpg"):
 	pixelCanvas.save(name)
+
+def _getPixelChunk(smallestPixelChunk):
+	width = smallestPixelChunk[1]
+	height = smallestPixelChunk[0]
+	ar = float(width / height)
+
+	if ar < 1:
+		return [(2 * height, 4 * width),
+				(2 * height, 2 * width),
+				(height, 2 * width),
+			  	(height, width)]
+	else:
+		return [(4 * height, 2 * width),
+				(2 * height, 2 * width),
+				(2 * height, width),
+				(height, width)]
 
 ############################################################################################################
 ##                                       >>> Main program <<<                                             ##
@@ -91,13 +109,19 @@ def _savePixelCanvas(pixelCanvas, name = "mosaic_gallery.jpg"):
 # with every successfully fit image on it. This means that not 100% of the images could be used.
 # It most commomnly fits about 70 to 90% of the pictures (at least in this first version).
 #
+# Despite having two modes of mosaic composition (landscape and portrait) keep in mind that most of pictures
+# are taken in landscape format. Hence, it's probably gonna be harder to complete the whole canvas in the
+# portrait scenario.
+#
+
 def mosaic(folderName = "img_folder",
 		   maxAttempts = ct.MAX_ATTEMPTS,
-		   paperSize = ct.SZ_A3,
+		   paperSize = ct.SZ_A3_L,
 		   clusterPow = ct.SZ_CLSTR,
 		   padding = ct.DEF_PADDING,
-		   color = ct.BCKGRND_CLR):
-	
+		   color = ct.BCKGRND_CLR,
+           debug = False):
+
 	_rld()
 	_clearLog()
 	pictures = []
@@ -105,16 +129,16 @@ def mosaic(folderName = "img_folder",
 	minChunkSize = 2**clusterPow
 	width = int(round(paperSize[0] / minChunkSize))
 	height = int(round(paperSize[1] / minChunkSize))
+
+	# pixel chunk is defined by (lines, columns) format, hence (height, width)
+	# when resizing to the closest chunk, keep this in mind
 	smallestPixelChunk = (height, width)
-	pixelChunks = [(2 * height, 4 * width),
-				   (2 * height, 2 * width),
-			  	   (height, 2 * width),
-			  	   (height, width)]
+	pixelChunks = _getPixelChunk(smallestPixelChunk)
 	canvasList = []
-	
+
 	print "pixel chunks: " + str(pixelChunks)
-	
-	count = 0;
+
+	count = 0
 	for path, directory, files in os.walk(folderName):
 		for f in files:
 			if utils.isImage(f):
@@ -148,7 +172,10 @@ def mosaic(folderName = "img_folder",
 		highest.printClusterCanvas("", "_highest")
 		print str(highest.getCanvasRating()) + " is the highest rating of this simulation"
 
-		pixelCanvas = _pasteImagesInCanvas(paperSize, highest, padding, color)
+		pixelCanvas = _pasteImagesInCanvas(paperSize, highest, padding, color, debug)
 		_savePixelCanvas(pixelCanvas)
 	else:
 		print "simulation endend without finding a solution for the problem ..."
+
+if __name__ == '__main__':
+	mosaic()

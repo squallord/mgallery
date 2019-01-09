@@ -40,11 +40,11 @@ class Picture:
 	def addPadding(self, padding, color):
 		self._image = utils.addPaddingIn(self._image, padding, color)
 
-	# Print photo ID in the upper-left corner of the image.
-	# Just for debugging reasons...
+	# Print text in the upper-left corner of the image.
+	# Just for debugging purposes...
 	#
-	def addID(self):
-		self._image = utils.drawText(self._image, "ID: " + str(self._id))
+	def writeTXT(self, text, fontSize, offset):
+		self._image = utils.drawText(self._image, text, fontSize, offset)
 
 	def setPosition(self, position):
 		self._position = position
@@ -144,6 +144,8 @@ class Picture:
 		closestResolution = self._findClosestResolution(distances)
 
 		if closestResolution != None:
+			# the chunk is defined as (line, column), so we have to take this into account here by doing
+			# width / column, or closestResolution[0]/smallestChunk[1] as the chunkClusterWidth, for example
 			chunkClusterWidth = closestResolution[0]/smallestChunk[1]
 			chunkClusterHeight = closestResolution[1]/smallestChunk[0]
 			self._chunkType = (chunkClusterHeight, chunkClusterWidth)

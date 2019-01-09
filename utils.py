@@ -93,19 +93,19 @@ def shrinkAndKeepAR(image, factor):
 		width, height = img.size
 		return img.resize((int(width * factor), int(height * factor)))
 
-def drawText(image, imageText):
+def drawText(image, imageText, fontSize, offset):
 	# make a blank image for the text, initialized to transparent text color
 	img = image.convert('RGBA')
-	txt = Image.new('RGBA', img.size, (255, 255, 255, 0))
+	txt = Image.new('RGBA', img.size, (0, 255, 0, 0))
 
 	# get a font
-	fnt = ImageFont.truetype('fonts/Anonymous.ttf', 80)
+	fnt = ImageFont.truetype('fonts/Anonymous.ttf', fontSize)
 	
 	# get a drawing context
 	d = ImageDraw.Draw(txt)
 
 	# draw text with partial opacity
-	d.text((10,10), imageText, font=fnt, fill=(0, 0, 0, 150))
+	d.text((10 + offset[0], 10 + offset[1]), imageText, font=fnt, fill=(0, 0, 0, 150))
 
 	return Image.alpha_composite(img, txt)
 
