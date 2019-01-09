@@ -116,7 +116,7 @@ def _getPixelChunk(smallestPixelChunk):
 
 def mosaic(folderName = "img_folder",
 		   maxAttempts = ct.MAX_ATTEMPTS,
-		   paperSize = ct.SZ_A3_L,
+		   paperSize = ct.SZ_75x50,
 		   clusterPow = ct.SZ_CLSTR,
 		   padding = ct.DEF_PADDING,
 		   color = ct.BCKGRND_CLR,
